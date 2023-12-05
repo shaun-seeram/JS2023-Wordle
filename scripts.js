@@ -1,4 +1,7 @@
 let game;
+let streak = localStorage.getItem("wordleScore") ?? 0;
+const streakContainer = document.querySelector("#streak");
+const revealContainer = document.querySelector("#wordReveal");
 const alphabet = [..."abcdefghijklmnopqrstuvwxyz"];
 
 class Wordle {
@@ -6,7 +9,6 @@ class Wordle {
         this.word = word;
         this.wordArr = [...word];
         this.guess = [];
-        // this.guessed = [];
         this.round = 1;
         this.letter = 1;
         this.status = "playing"
@@ -16,15 +18,15 @@ class Wordle {
         if (this.guess.length < 5) {
             this.guess.push(letter);
             document.querySelector(`.word${this.round} .letter${this.letter}`).textContent = letter;
-            if (this.letter !== 5) {
-                this.letter++;
-            }
+            this.letter++;
         }
     }
 
     async submitWord() {
         if (this.guess.join("") === this.word) {
             document.querySelectorAll(`.word${this.round} .letterContainer`).forEach((block) => block.classList.add("green"));
+            streak++;
+            updateStreak();
             this.status = "win";
         } else if (this.guess.length === 5) {
             const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${this.guess.join("")}`);
@@ -36,7 +38,7 @@ class Wordle {
                     } else if (this.wordArr.includes(this.guess[i])) {
                         block.classList.add("yellow");
                     } else {
-                        block.classList.add("red")
+                        block.classList.add("gray")
                     }
                 });
                 this.round++;
@@ -44,6 +46,9 @@ class Wordle {
                 this.guess = [];
                 if (this.round === 7) {
                     this.status = "lose";
+                    streak = 0;
+                    updateStreak();
+                    revealWord();
                 }
             } else {
                 document.querySelectorAll(`.word${this.round} .letterContainer`).forEach((block) => block.classList.add("red"));
@@ -62,6 +67,12 @@ const getWord = async () => {
 }
 
 const setUI = () => {
+    updateStreak();
+    revealContainer.textContent = "";
+    revealContainer.classList.remove("reveal");
+    const gameContainer = document.querySelector(".gameContainer");
+    gameContainer.innerHTML = "";
+
     for (let i = 1; i <= 6; i++) {
         const wordContainer = document.createElement("div");
         wordContainer.classList.add("wordContainer", `word${i}`);
@@ -72,8 +83,18 @@ const setUI = () => {
             wordContainer.appendChild(letterContainer);
         }
 
-        document.querySelector(".gameContainer").appendChild(wordContainer);
+        gameContainer.appendChild(wordContainer);
     }
+}
+
+const updateStreak = () => {
+    localStorage.setItem("wordleScore", streak);
+    streakContainer.textContent = streak;
+}
+
+const revealWord = () => {
+    revealContainer.textContent = game.word.toUpperCase();
+    revealContainer.classList.add("visible");
 }
 
 const newGame = async () => { 
@@ -82,19 +103,23 @@ const newGame = async () => {
     setUI();
 }
 
+document.querySelector("#newGame").addEventListener("click", _ => newGame());
+
 document.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
         game.submitWord();
     }
 
     if (e.key === "Backspace") {
-        document.querySelector(`.word${game.round} .letter${game.letter}`).textContent = "";
+        document.querySelector(`.word${game.round} .letter${game.letter !== 1 ? game.letter - 1 : game.letter}`).textContent = "";
         game.guess.pop();
+
+        if (game.letter === 6) {
+            document.querySelectorAll(`.word${game.round} .letterContainer`).forEach((block) => block.classList.remove("red"));
+        }
         if (game.letter > 1) {
             game.letter--;
         }
-
-        // Issues deleting when not full word, due to increasing letter count after guess...
     }
 
     if (game.status === "playing" && alphabet.includes(e.key.toLowerCase())) {
