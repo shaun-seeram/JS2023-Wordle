@@ -76,7 +76,7 @@ const getWord = async () => {
 const setUI = () => {
     updateStreak();
     revealContainer.textContent = "";
-    revealContainer.classList.remove("reveal");
+    revealContainer.classList.remove("visible");
     const gameContainer = document.querySelector(".gameContainer");
     gameContainer.innerHTML = "";
 
