@@ -14,7 +14,7 @@ body {
 }
 
 header {
-    padding: 20px;
+    padding: 15px;
     height: 78px;
     border-bottom: 1px solid #3a3a3c;
     color: #FFF;
@@ -27,7 +27,7 @@ header {
 #streakP {
     margin: 0;
     position: absolute;
-    left: 20px;
+    left: 15px;
     top: 50%;
     transform: translateY(-50%);
     font-size: 0.75rem;
@@ -41,7 +41,7 @@ h1 {
 
 #newGame {
     position: absolute;
-    right: 20px;
+    right: 15px;
     top: 50%;
     transform: translateY(-50%);
     background-color: transparent;
@@ -68,24 +68,22 @@ h1 {
 }
 
 main {
-    /* height: calc(100vh - 78px); */
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
 }
 
 .gameContainer {
-    /* height: 100%; */
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding: 20px;
+    gap: 15px;
+    padding: 15px;
 }
 
 .wordContainer {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 15px;
 }
 
 .letterContainer {
@@ -126,7 +124,7 @@ main {
 
 .keyboard {
     width: 100%;
-    padding: 20px 30px;
+    padding: 15px 30px;
     padding-top: 0;
     display: flex;
     flex-direction: column;
