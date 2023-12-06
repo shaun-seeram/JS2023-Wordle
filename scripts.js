@@ -71,6 +71,7 @@ const setUI = () => {
     updateStreak();
     revealContainer.textContent = "";
     revealContainer.classList.remove("visible");
+    keys.forEach(key => key.classList.remove("red", "green", "yellow", "gray"));
     gameContainer.innerHTML = "";
 
     for (let i = 1; i <= 6; i++) {
