@@ -2,6 +2,7 @@ let game;
 let streak = localStorage.getItem("wordleScore") ?? 0;
 const streakContainer = document.querySelector("#streak");
 const revealContainer = document.querySelector("#wordReveal");
+const keys = document.querySelectorAll(".key");
 const alphabet = [..."abcdefghijklmnopqrstuvwxyz"];
 
 class Wordle {
@@ -25,6 +26,9 @@ class Wordle {
     async submitWord() {
         if (this.guess.join("") === this.word) {
             document.querySelectorAll(`.word${this.round} .letterContainer`).forEach((block) => block.classList.add("green"));
+            this.guess.forEach((letter) => {
+                document.querySelector(`button[data-key="${letter}"]`).classList.add("green");
+            })
             streak++;
             updateStreak();
             this.status = "win";
@@ -35,10 +39,13 @@ class Wordle {
                 document.querySelectorAll(`.word${this.round} .letterContainer`).forEach((block, i) => {
                     if (this.guess[i] === this.wordArr[i]) {
                         block.classList.add("green");
+                        document.querySelector(`button[data-key="${this.guess[i]}"]`).classList.add("green");
                     } else if (this.wordArr.includes(this.guess[i])) {
                         block.classList.add("yellow");
+                        document.querySelector(`button[data-key="${this.guess[i]}"]`).classList.add("yellow");
                     } else {
                         block.classList.add("gray")
+                        document.querySelector(`button[data-key="${this.guess[i]}"]`).classList.add("gray");
                     }
                 });
                 this.round++;
@@ -125,6 +132,18 @@ document.addEventListener("keydown", (e) => {
     if (game.status === "playing" && alphabet.includes(e.key.toLowerCase())) {
         game.guessLetter(e.key.toLowerCase());
     }
+})
+
+keys.forEach((key) => {
+    key.addEventListener("click", _ => {
+        if (key.dataset.key === "delete") {
+            document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Backspace'}));
+        } else if (key.dataset.key === "enter") {
+            document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+        } else {
+            document.dispatchEvent(new KeyboardEvent('keydown', {'key': key.dataset.key}));
+        }
+    })
 })
 
 newGame();
