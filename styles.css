@@ -140,6 +140,7 @@ main {
 }
 
 .keyboard button {
+    touch-action: manipulation;
     font-size: .75rem;
     height: 60px;
     width: 100%;
