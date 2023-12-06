@@ -2,6 +2,7 @@ let game;
 let streak = localStorage.getItem("wordleScore") ?? 0;
 const streakContainer = document.querySelector("#streak");
 const revealContainer = document.querySelector("#wordReveal");
+const gameContainer = document.querySelector(".gameContainer");
 const keys = document.querySelectorAll(".key");
 const alphabet = [..."abcdefghijklmnopqrstuvwxyz"];
 
@@ -64,20 +65,12 @@ class Wordle {
     }
 }
 
-const getWord = async () => {
-    const res = await fetch("https://random-word-api.vercel.app/api?words=1&length=5");
-    if (res.status !== 200) {
-        throw new Error("Could not fetch word");
-    }
-    const word = await res.json();
-    return word;
-}
 
+// UI
 const setUI = () => {
     updateStreak();
     revealContainer.textContent = "";
     revealContainer.classList.remove("visible");
-    const gameContainer = document.querySelector(".gameContainer");
     gameContainer.innerHTML = "";
 
     for (let i = 1; i <= 6; i++) {
@@ -104,20 +97,13 @@ const revealWord = () => {
     revealContainer.classList.add("visible");
 }
 
-const newGame = async () => { 
-    const word = await getWord();
-    game = new Wordle(word[0]);
-    setUI();
-}
-
-document.querySelector("#newGame").addEventListener("click", _ => newGame());
+// Event Listeners
+document.querySelector("#newGame").addEventListener("click", () => newGame());
 
 document.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
         game.submitWord();
-    }
-
-    if (e.key === "Backspace") {
+    } else if (e.key === "Backspace") {
         document.querySelector(`.word${game.round} .letter${game.letter !== 1 ? game.letter - 1 : game.letter}`).textContent = "";
         game.guess.pop();
 
@@ -127,9 +113,7 @@ document.addEventListener("keydown", (e) => {
         if (game.letter > 1) {
             game.letter--;
         }
-    }
-
-    if (game.status === "playing" && alphabet.includes(e.key.toLowerCase())) {
+    } else if (game.status === "playing" && alphabet.includes(e.key.toLowerCase())) {
         game.guessLetter(e.key.toLowerCase());
     }
 })
@@ -145,5 +129,17 @@ keys.forEach((key) => {
         }
     })
 })
+
+
+// Initiate Game
+const newGame = async () => { 
+    const res = await fetch("https://random-word-api.vercel.app/api?words=1&length=5");
+    if (res.status !== 200) {
+        throw new Error("Could not fetch word");
+    }
+    const word = await res.json();
+    game = new Wordle(word[0]);
+    setUI();
+}
 
 newGame();
