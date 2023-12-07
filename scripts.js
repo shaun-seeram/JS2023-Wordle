@@ -121,12 +121,16 @@ document.addEventListener("keydown", (e) => {
 
 keys.forEach((key) => {
     key.addEventListener("click", _ => {
-        if (key.dataset.key === "delete") {
-            document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Backspace'}));
-        } else if (key.dataset.key === "enter") {
-            document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-        } else {
-            document.dispatchEvent(new KeyboardEvent('keydown', {'key': key.dataset.key}));
+        switch (key.dataset.key) {
+            case "delete":
+                document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Backspace'}));
+                break;
+            case "enter":
+                document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+                break;
+            default:
+                document.dispatchEvent(new KeyboardEvent('keydown', {'key': key.dataset.key}));
+                break;
         }
     })
 })
