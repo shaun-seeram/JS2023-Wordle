@@ -102,9 +102,9 @@ const revealWord = () => {
 document.querySelector("#newGame").addEventListener("click", () => newGame());
 
 document.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
+    if (game.status === "playing" && e.key === "Enter") {
         game.submitWord();
-    } else if (e.key === "Backspace") {
+    } else if (game.status === "playing" && e.key === "Backspace") {
         document.querySelector(`.word${game.round} .letter${game.letter !== 1 ? game.letter - 1 : game.letter}`).textContent = "";
         game.guess.pop();
 
