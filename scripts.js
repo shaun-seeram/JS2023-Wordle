@@ -54,9 +54,10 @@ class Wordle {
                 this.guess = [];
                 if (this.round === 7) {
                     this.status = "lose";
+                    revealContainer.textContent = game.word.toUpperCase();
+                    revealContainer.classList.add("visible");
                     streak = 0;
                     updateStreak();
-                    revealWord();
                 }
             } else {
                 document.querySelectorAll(`.word${this.round} .letterContainer`).forEach((block) => block.classList.add("red"));
@@ -91,11 +92,6 @@ const setUI = () => {
 const updateStreak = () => {
     localStorage.setItem("wordleScore", streak);
     streakContainer.textContent = streak;
-}
-
-const revealWord = () => {
-    revealContainer.textContent = game.word.toUpperCase();
-    revealContainer.classList.add("visible");
 }
 
 // Event Listeners
