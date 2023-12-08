@@ -31,7 +31,7 @@ class Wordle {
                 document.querySelector(`button[data-key="${letter}"]`).classList.add("green");
             })
             streak++;
-            updateStreak();
+            this.updateStreak();
             this.status = "win";
         } else if (this.guess.length === 5) {
             const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${this.guess.join("")}`);
@@ -57,41 +57,40 @@ class Wordle {
                     revealContainer.textContent = game.word.toUpperCase();
                     revealContainer.classList.add("visible");
                     streak = 0;
-                    updateStreak();
+                    this.updateStreak();
                 }
             } else {
                 document.querySelectorAll(`.word${this.round} .letterContainer`).forEach((block) => block.classList.add("red"));
             }    
         }
     }
-}
 
-
-// UI
-const setUI = () => {
-    updateStreak();
-    revealContainer.textContent = "";
-    revealContainer.classList.remove("visible");
-    keys.forEach(key => key.classList.remove("red", "green", "yellow", "gray"));
-    gameContainer.innerHTML = "";
-
-    for (let i = 1; i <= 6; i++) {
-        const wordContainer = document.createElement("div");
-        wordContainer.classList.add("wordContainer", `word${i}`);
-
-        for (let j = 1; j <= 5; j++) {
-            const letterContainer = document.createElement("div");
-            letterContainer.classList.add("letterContainer", `letter${j}`);
-            wordContainer.appendChild(letterContainer);
+    setUI() {
+        this.updateStreak();
+        revealContainer.textContent = "";
+        revealContainer.classList.remove("visible");
+        keys.forEach(key => key.classList.remove("red", "green", "yellow", "gray"));
+        gameContainer.innerHTML = "";
+    
+        for (let i = 1; i <= 6; i++) {
+            const wordContainer = document.createElement("div");
+            wordContainer.classList.add("wordContainer", `word${i}`);
+    
+            for (let j = 1; j <= 5; j++) {
+                const letterContainer = document.createElement("div");
+                letterContainer.classList.add("letterContainer", `letter${j}`);
+                wordContainer.appendChild(letterContainer);
+            }
+    
+            gameContainer.appendChild(wordContainer);
         }
-
-        gameContainer.appendChild(wordContainer);
     }
-}
+    
+    updateStreak() {
+        localStorage.setItem("wordleScore", streak);
+        streakContainer.textContent = streak;
+    }
 
-const updateStreak = () => {
-    localStorage.setItem("wordleScore", streak);
-    streakContainer.textContent = streak;
 }
 
 // Event Listeners
@@ -134,13 +133,14 @@ keys.forEach((key) => {
 
 // Initiate Game
 const newGame = async () => { 
+    document.querySelector("#newGame").blur();
     const res = await fetch("https://random-word-api.vercel.app/api?words=1&length=5");
     if (res.status !== 200) {
         throw new Error("Could not fetch word");
     }
     const word = await res.json();
     game = new Wordle(word[0]);
-    setUI();
+    game.setUI();
 }
 
 newGame();
